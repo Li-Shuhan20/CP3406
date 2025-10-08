@@ -1,0 +1,7 @@
+// Root-level Gradle build file
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
+
+
