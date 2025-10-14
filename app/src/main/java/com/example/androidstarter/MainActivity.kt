@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,10 +31,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -101,7 +106,7 @@ private fun AppRoot() {
             modifier = Modifier.fillMaxSize()
         ) {
             composable(Dest.Shelf.route) { CenteredText("Shelf") }
-            composable(Dest.Library.route) { CenteredText("Library") }
+            composable(Dest.Library.route) { LibraryScreen() }
             composable(Dest.Home.route) { HomeScreen() }
             composable(Dest.Community.route) { CenteredText("Community") }
             composable(Dest.Profile.route) { CenteredText("Profile") }
@@ -119,6 +124,11 @@ data class Book(
 data class Discussion(
     val title: String,
     val author: String,
+)
+
+data class Tag(
+    val name: String,
+    val count: Int
 )
 
 @Composable
@@ -148,7 +158,7 @@ private fun HomeScreen() {
         // Recommended Books Section
         item {
             Text(
-                text = "📚 Recommended Books",
+                text = "Recommended Books",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -168,7 +178,7 @@ private fun HomeScreen() {
         item {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "🔥 Hot Discussions",
+                text = "Hot Discussions",
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold
             )
@@ -250,6 +260,125 @@ private fun DiscussionCard(discussion: Discussion) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun LibraryScreen() {
+    var searchQuery by remember { mutableStateOf("") }
+    
+    val hotTags = listOf(
+        Tag("Science Fiction", 1247),
+        Tag("Mystery", 892),
+        Tag("Romance", 1156),
+        Tag("Fantasy", 943),
+        Tag("Thriller", 678),
+        Tag("Biography", 445),
+        Tag("History", 567),
+        Tag("Self-Help", 723)
+    )
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Search Bar Section
+        item {
+            Text(
+                text = "Library",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        
+        item {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = { Text("Search books, authors, or topics...") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = "Search"
+                    )
+                },
+                singleLine = true
+            )
+        }
+        
+        // Hot Tags Section
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Popular Tags",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(hotTags) { tag ->
+                    TagChip(tag = tag)
+                }
+            }
+        }
+        
+        // Search Results Placeholder
+        item {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Search Results",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        
+        item {
+            if (searchQuery.isEmpty()) {
+                Text(
+                    text = "Enter a search term to find books",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(vertical = 32.dp)
+                )
+            } else {
+                Text(
+                    text = "Searching for: \"$searchQuery\"",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TagChip(tag: Tag) {
+    Card(
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(
+                text = tag.name,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium
+            )
+            Text(
+                text = "(${tag.count})",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         }
     }
 }
