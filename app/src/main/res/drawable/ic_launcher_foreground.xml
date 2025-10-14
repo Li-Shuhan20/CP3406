@@ -7,9 +7,18 @@
     <path
         android:fillColor="#FFFFFF"
         android:pathData="M0,0h108v108h-108z"/>
+    <!-- Background -->
     <path
         android:fillColor="#6750A4"
-        android:pathData="M54,18a36,36 0 1,0 0,72a36,36 0 1,0 0,-72z"/>
+        android:pathData="M8,8h92v92h-92z"/>
+    <!-- Welcome text representation -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,35 L20,35 L88,35 L88,45 L88,45 L20,45 L20,35 Z M25,50 L25,50 L83,50 L83,60 L83,60 L25,60 L25,50 Z M30,65 L30,65 L78,65 L78,75 L78,75 L30,75 L30,65 Z"/>
+    <!-- User icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M45,80 L45,80 L63,80 L63,95 L63,95 L45,95 L45,80 Z M48,82 L48,82 L60,82 L60,85 L60,85 L48,85 L48,82 Z M48,87 L48,87 L60,87 L60,90 L60,90 L48,90 L48,87 Z M48,92 L48,92 L60,92 L60,95 L60,95 L48,95 L48,92 Z"/>
 </vector>
 
 
