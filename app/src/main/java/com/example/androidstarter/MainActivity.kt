@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -105,7 +106,7 @@ private fun AppRoot() {
             startDestination = Dest.Home.route,
             modifier = Modifier.fillMaxSize()
         ) {
-            composable(Dest.Shelf.route) { CenteredText("Shelf") }
+            composable(Dest.Shelf.route) { ShelfScreen() }
             composable(Dest.Library.route) { LibraryScreen() }
             composable(Dest.Home.route) { HomeScreen() }
             composable(Dest.Community.route) { CenteredText("Community") }
@@ -119,6 +120,7 @@ data class Book(
     val title: String,
     val author: String,
     val rating: Float,
+    val progress: Float = 0f // Reading progress (0.0 to 1.0)
 )
 
 data class Discussion(
@@ -191,9 +193,12 @@ private fun HomeScreen() {
 }
 
 @Composable
-private fun BookCard(book: Book) {
+private fun BookCard(
+    book: Book,
+    modifier: Modifier = Modifier.width(140.dp)
+) {
     Card(
-        modifier = Modifier.width(140.dp),
+        modifier = modifier,
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
@@ -229,6 +234,36 @@ private fun BookCard(book: Book) {
                     text = book.rating.toString(),
                     style = MaterialTheme.typography.bodySmall
                 )
+            }
+            
+            // Reading Progress
+            if (book.progress > 0f) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Progress",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = "${(book.progress * 100).toInt()}%",
+                            style = MaterialTheme.typography.bodySmall,
+                            fontWeight = FontWeight.Medium
+                        )
+                    }
+                    LinearProgressIndicator(
+                        progress = book.progress,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.primary,
+                        trackColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                }
             }
         }
     }
@@ -379,6 +414,57 @@ private fun TagChip(tag: Tag) {
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+        }
+    }
+}
+
+@Composable
+private fun ShelfScreen() {
+    val myBooks = listOf(
+        Book("The Great Gatsby", "F. Scott Fitzgerald", 4.2f, 0.75f),
+        Book("To Kill a Mockingbird", "Harper Lee", 4.8f, 1.0f),
+        Book("Pride and Prejudice", "Jane Austen", 4.6f, 0.45f),
+        Book("The Catcher in the Rye", "J.D. Salinger", 4.0f, 0.0f),
+        Book("1984", "George Orwell", 4.6f, 0.9f),
+        Book("Harry Potter and the Sorcerer's Stone", "J.K. Rowling", 4.9f, 1.0f),
+        Book("The Lord of the Rings", "J.R.R. Tolkien", 4.7f, 0.6f),
+        Book("Dune", "Frank Herbert", 4.3f, 0.25f),
+        Book("The Hobbit", "J.R.R. Tolkien", 4.5f, 0.8f),
+        Book("Brave New World", "Aldous Huxley", 4.1f, 0.0f)
+    )
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Header
+        item {
+            Text(
+                text = "My Shelf",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        
+        // Books Grid
+        items(myBooks.chunked(2)) { rowBooks ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                rowBooks.forEach { book ->
+                    BookCard(
+                        book = book,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                // Fill empty space if odd number of books
+                if (rowBooks.size == 1) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
         }
     }
 }
