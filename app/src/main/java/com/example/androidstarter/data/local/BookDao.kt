@@ -28,7 +28,7 @@ interface BookDao {
     fun searchBooks(keyword: String): Flow<List<BookEntity>>
 
     @Query("SELECT * FROM books WHERE id = :id LIMIT 1")
-    suspend fun getBookById(id: Long): BookEntity?
+    fun getBookById(id: Long): Flow<BookEntity?>
 
     @Query("UPDATE books SET progress = :newProgress WHERE id = :id")
     suspend fun updateProgress(id: Long, newProgress: Float)

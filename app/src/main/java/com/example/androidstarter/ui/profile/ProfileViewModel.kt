@@ -1,4 +1,4 @@
-package com.example.androidstarter
+package com.example.androidstarter.ui.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

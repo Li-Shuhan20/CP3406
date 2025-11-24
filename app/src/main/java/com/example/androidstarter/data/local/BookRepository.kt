@@ -15,6 +15,9 @@ class BookRepository(
 ) {
     fun getShelfBooks(): Flow<List<BookEntity>> = bookDao.getShelfBooks()
 
+    fun getBookById(id: Long): Flow<BookEntity?> =
+        bookDao.getBookById(id)
+
     fun searchBooks(keyword: String): Flow<List<BookEntity>> =
         if (keyword.isBlank()) {
             bookDao.getShelfBooks()

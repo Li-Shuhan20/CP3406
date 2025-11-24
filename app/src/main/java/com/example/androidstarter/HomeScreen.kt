@@ -9,60 +9,100 @@ import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.androidstarter.data.BookRepository
+import com.example.androidstarter.data.local.AppDatabase
 import com.example.androidstarter.ui.components.BookCard
+import com.example.androidstarter.ui.home.HomeViewModel
+import com.example.androidstarter.ui.home.HomeViewModelFactory
 
 @Composable
 fun HomeScreen() {
     val recommendedBooks = listOf(
         BookUiModel(
-            id = 0L,
             title = "The Three-Body Problem",
             author = "Liu Cixin",
             rating = 4.8f,
-            progress = 0f
         ),
         BookUiModel(
-            id = 0L,
             title = "To Live",
             author = "Yu Hua",
             rating = 4.9f,
-            progress = 0f
         ),
         BookUiModel(
-            id = 0L,
             title = "One Hundred Years of Solitude",
             author = "Gabriel García Márquez",
             rating = 4.7f,
-            progress = 0f
         ),
         BookUiModel(
-            id = 0L,
             title = "1984",
             author = "George Orwell",
             rating = 4.6f,
-            progress = 0f
         ),
         BookUiModel(
-            id = 0L,
             title = "The Little Prince",
             author = "Antoine de Saint-Exupéry",
             rating = 4.9f,
-            progress = 0f
         )
     )
 
     val hotDiscussions = listOf(
-        Discussion("What's the most shocking scene in 'The Three-Body Problem'?", "SciFi Fan", 128, 89, "Discussion", "2h ago"),
-        Discussion("Recommend some good mystery novels", "Bookworm", 76, 45, "Recommendation", "5h ago"),
-        Discussion("How to develop reading habits?", "Reading Expert", 203, 156, "Discussion", "1d ago"),
-        Discussion("Most anticipated books of 2024", "Editor", 94, 67, "Discussion", "3h ago"),
-        Discussion("E-books vs Physical books, which do you prefer?", "Book Lover", 89, 52, "Discussion", "6h ago")
+        Discussion(
+            title = "What's the most shocking scene in 'The Three-Body Problem'?",
+            author = "SciFi Fan",
+            replies = 128,
+            likes = 89,
+            category = "Discussion",
+            timeAgo = "2h ago"
+        ),
+        Discussion(
+            title = "Recommend some good mystery novels",
+            author = "Bookworm",
+            replies = 76,
+            likes = 45,
+            category = "Recommendation",
+            timeAgo = "5h ago"
+        ),
+        Discussion(
+            title = "How to develop reading habits?",
+            author = "Reading Expert",
+            replies = 203,
+            likes = 156,
+            category = "Discussion",
+            timeAgo = "1d ago"
+        ),
+        Discussion(
+            title = "Most anticipated books of 2024",
+            author = "Editor",
+            replies = 94,
+            likes = 67,
+            category = "Discussion",
+            timeAgo = "3h ago"
+        ),
+        Discussion(
+            title = "E-books vs Physical books, which do you prefer?",
+            author = "Book Lover",
+            replies = 89,
+            likes = 52,
+            category = "Discussion",
+            timeAgo = "6h ago"
+        )
     )
+
+    val context = LocalContext.current
+    val db = remember { AppDatabase.getInstance(context) }
+    val repo = remember { BookRepository(db.bookDao()) }
+
+    val homeVm: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(repo)
+    )
+    val uiState by homeVm.uiState.collectAsState()
 
     LazyColumn(
         modifier = Modifier
@@ -83,6 +123,26 @@ fun HomeScreen() {
                 items(recommendedBooks) { book ->
                     BookCard(book = book)
                 }
+            }
+        }
+
+        if (uiState.continueReading.isNotEmpty()) {
+            item {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Continue reading",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
+            items(uiState.continueReading) { book ->
+                BookCard(
+                    book = book,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                )
             }
         }
 

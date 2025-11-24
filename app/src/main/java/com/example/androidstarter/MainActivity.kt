@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.androidstarter.ui.library.LibraryScreen
+import com.example.androidstarter.ui.profile.ProfileScreen
 import com.example.androidstarter.ui.shelf.ShelfScreen
 
 class MainActivity : ComponentActivity() {
