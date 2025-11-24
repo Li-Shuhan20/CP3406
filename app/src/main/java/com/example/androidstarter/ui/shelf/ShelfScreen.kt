@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.androidstarter.BookCard
+import com.example.androidstarter.ui.components.BookCard
 import com.example.androidstarter.data.BookRepository
 import com.example.androidstarter.data.local.AppDatabase
 import com.example.androidstarter.toUiModel
