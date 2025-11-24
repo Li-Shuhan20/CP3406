@@ -27,6 +27,9 @@ interface BookDao {
     )
     fun searchBooks(keyword: String): Flow<List<BookEntity>>
 
+    @Query("SELECT * FROM books WHERE id = :id LIMIT 1")
+    suspend fun getBookById(id: Long): BookEntity?
+
     @Query("UPDATE books SET progress = :newProgress WHERE id = :id")
     suspend fun updateProgress(id: Long, newProgress: Float)
 
@@ -41,4 +44,10 @@ interface BookDao {
 
     @Query("SELECT COUNT(*) FROM books")
     suspend fun getCount(): Int
+
+    @Query("SELECT COUNT(*) FROM books WHERE progress >= 0.99")
+    suspend fun getFinishedCount(): Int
+
+    @Query("SELECT COUNT(*) FROM books WHERE progress > 0 AND progress < 0.99")
+    suspend fun getInProgressCount(): Int
 }
