@@ -4,6 +4,12 @@ import com.example.androidstarter.data.local.BookDao
 import com.example.androidstarter.data.local.BookEntity
 import kotlinx.coroutines.flow.Flow
 
+data class ReadingStats(
+    val total: Int,
+    val finished: Int,
+    val inProgress: Int
+)
+
 class BookRepository(
     private val bookDao: BookDao
 ) {
@@ -65,5 +71,16 @@ class BookRepository(
             )
             samples.forEach { bookDao.insertBook(it) }
         }
+    }
+
+    suspend fun getReadingStats(): ReadingStats {
+        val total = bookDao.getCount()
+        val finished = bookDao.getFinishedCount()
+        val inProgress = bookDao.getInProgressCount()
+        return ReadingStats(
+            total = total,
+            finished = finished,
+            inProgress = inProgress
+        )
     }
 }

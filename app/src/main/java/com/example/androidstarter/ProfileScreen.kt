@@ -23,10 +23,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.androidstarter.data.BookRepository
+import com.example.androidstarter.data.local.AppDatabase
 
 @Composable
 fun ProfileScreen() {
+    val context = LocalContext.current
+    val db = remember { AppDatabase.getInstance(context) }
+    val repo = remember { BookRepository(db.bookDao()) }
+
+    val vm: ProfileViewModel = viewModel(
+        factory = ProfileViewModelFactory(repo)
+    )
+
+    val uiState by vm.uiState.collectAsState()
+
     val profileItems = listOf(
         ProfileItem("Reading Stats", "View your reading statistics", Icons.Default.Timer),
         ProfileItem("Create Content", "Write reviews and share thoughts", Icons.Default.Create),
@@ -42,11 +59,20 @@ fun ProfileScreen() {
     ) {
         // Header
         item {
-            Text(
-                text = "Profile",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
+            Column {
+                Text(
+                    text = "Profile",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                if (uiState.isLoading) {
+                    Text(
+                        text = "Loading stats...",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
         }
 
         // Profile Header Card
@@ -104,9 +130,9 @@ fun ProfileScreen() {
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        StatItem("Books Read", "47")
-                        StatItem("Reading Time", "156h")
-                        StatItem("Reviews", "23")
+                        StatItem("Total", uiState.totalBooks.toString())
+                        StatItem("Finished", uiState.finishedBooks.toString())
+                        StatItem("In Progress", uiState.inProgressBooks.toString())
                     }
                 }
             }
