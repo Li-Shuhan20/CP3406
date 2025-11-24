@@ -1,13 +1,13 @@
 package com.example.androidstarter
 
-import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.androidstarter.data.local.BookEntity
 
-// 数据类
-data class Book(
+data class BookUiModel(
+    val id: Long = 0L,
     val title: String,
     val author: String,
-    val rating: Float,
-    val progress: Float = 0f // Reading progress (0.0 to 1.0)
+    val rating: Float = 0f,
+    val progress: Float = 0f
 )
 
 data class Discussion(
@@ -29,3 +29,12 @@ data class ProfileItem(
     val subtitle: String,
     val icon: androidx.compose.ui.graphics.vector.ImageVector
 )
+
+fun BookEntity.toUiModel(): BookUiModel =
+    BookUiModel (
+        id = id,
+        title = title,
+        author = author,
+        rating = rating,
+        progress = progress
+    )
