@@ -18,11 +18,41 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun HomeScreen() {
     val recommendedBooks = listOf(
-        Book("The Three-Body Problem", "Liu Cixin", 4.8f),
-        Book("To Live", "Yu Hua", 4.9f),
-        Book("One Hundred Years of Solitude", "Gabriel García Márquez", 4.7f),
-        Book("1984", "George Orwell", 4.6f),
-        Book("The Little Prince", "Antoine de Saint-Exupéry", 4.9f)
+        BookUiModel(
+            id = 0L,
+            title = "The Three-Body Problem",
+            author = "Liu Cixin",
+            rating = 4.8f,
+            progress = 0f
+        ),
+        BookUiModel(
+            id = 0L,
+            title = "To Live",
+            author = "Yu Hua",
+            rating = 4.9f,
+            progress = 0f
+        ),
+        BookUiModel(
+            id = 0L,
+            title = "One Hundred Years of Solitude",
+            author = "Gabriel García Márquez",
+            rating = 4.7f,
+            progress = 0f
+        ),
+        BookUiModel(
+            id = 0L,
+            title = "1984",
+            author = "George Orwell",
+            rating = 4.6f,
+            progress = 0f
+        ),
+        BookUiModel(
+            id = 0L,
+            title = "The Little Prince",
+            author = "Antoine de Saint-Exupéry",
+            rating = 4.9f,
+            progress = 0f
+        )
     )
 
     val hotDiscussions = listOf(
@@ -72,7 +102,7 @@ fun HomeScreen() {
 
 @Composable
 fun BookCard(
-    book: Book,
+    book: BookUiModel,
     modifier: Modifier = Modifier.width(140.dp)
 ) {
     Card(
@@ -115,7 +145,9 @@ fun BookCard(
             }
 
             if (book.progress > 0f) {
-                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,

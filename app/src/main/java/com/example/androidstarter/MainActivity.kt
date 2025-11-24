@@ -3,7 +3,10 @@ package com.example.androidstarter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Bookmarks
@@ -27,6 +30,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.androidstarter.ui.shelf.ShelfScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +73,9 @@ fun AppRoot() {
                         selected = selected,
                         onClick = {
                             navController.navigate(dest.route) {
-                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
                                 launchSingleTop = true
                                 restoreState = true
                             }
@@ -98,12 +104,12 @@ fun AppRoot() {
 @Composable
 fun WelcomeScreen() {
     var showWelcome by remember { mutableStateOf(true) }
-    
+
     LaunchedEffect(Unit) {
-        delay(2000) // 显示欢迎界面2秒
+        delay(2000)
         showWelcome = false
     }
-    
+
     if (showWelcome) {
         Box(
             modifier = Modifier.fillMaxSize(),
