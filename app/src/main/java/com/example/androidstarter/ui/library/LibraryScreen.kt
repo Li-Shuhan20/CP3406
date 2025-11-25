@@ -20,7 +20,9 @@ import com.example.androidstarter.data.local.AppDatabase
 import com.example.androidstarter.toUiModel
 
 @Composable
-fun LibraryScreen() {
+fun LibraryScreen(
+    onBookClick: (Long) -> Unit
+) {
     val context = LocalContext.current
     val db = remember { AppDatabase.getInstance(context) }
     val repo = remember { BookRepository(db.bookDao()) }
@@ -101,11 +103,13 @@ fun LibraryScreen() {
         }
 
         items(searchResults) { entity ->
+            val ui = entity.toUiModel()
             BookCard(
-                book = entity.toUiModel(),
+                book = ui,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
+                    .padding(vertical = 4.dp),
+                onClick = { onBookClick(ui.id) }
             )
         }
 

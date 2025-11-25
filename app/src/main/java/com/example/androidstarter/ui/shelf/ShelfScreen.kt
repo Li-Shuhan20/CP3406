@@ -26,7 +26,9 @@ import com.example.androidstarter.data.local.AppDatabase
 import com.example.androidstarter.toUiModel
 
 @Composable
-fun ShelfScreen() {
+fun ShelfScreen(
+    onBookClick: (Long) -> Unit
+) {
     val context = LocalContext.current
     val db = remember { AppDatabase.getInstance(context) }
     val repo = remember { BookRepository(db.bookDao()) }
@@ -61,7 +63,8 @@ fun ShelfScreen() {
                 rowBooks.forEach { bookUiModel ->
                     BookCard(
                         book = bookUiModel,
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        onClick = { onBookClick(bookUiModel.id) }
                     )
                 }
 

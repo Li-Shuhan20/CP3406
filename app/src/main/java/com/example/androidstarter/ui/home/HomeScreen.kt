@@ -1,4 +1,4 @@
-package com.example.androidstarter
+package com.example.androidstarter.ui.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,14 +15,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.androidstarter.BookUiModel
+import com.example.androidstarter.Discussion
 import com.example.androidstarter.data.BookRepository
 import com.example.androidstarter.data.local.AppDatabase
 import com.example.androidstarter.ui.components.BookCard
-import com.example.androidstarter.ui.home.HomeViewModel
-import com.example.androidstarter.ui.home.HomeViewModelFactory
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    onBookClick: (Long) -> Unit
+) {
+    val context = LocalContext.current
+    val db = remember { AppDatabase.getInstance(context) }
+    val repo = remember { BookRepository(db.bookDao()) }
+
+    val homeVm: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(repo)
+    )
+    val uiState by homeVm.uiState.collectAsState()
+
     val recommendedBooks = listOf(
         BookUiModel(
             title = "The Three-Body Problem",
@@ -95,15 +105,6 @@ fun HomeScreen() {
         )
     )
 
-    val context = LocalContext.current
-    val db = remember { AppDatabase.getInstance(context) }
-    val repo = remember { BookRepository(db.bookDao()) }
-
-    val homeVm: HomeViewModel = viewModel(
-        factory = HomeViewModelFactory(repo)
-    )
-    val uiState by homeVm.uiState.collectAsState()
-
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -120,8 +121,12 @@ fun HomeScreen() {
 
         item {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(recommendedBooks) { book ->
-                    BookCard(book = book)
+                items(recommendedBooks) { bookUi ->
+                    BookCard(
+                        book = bookUi,
+                        modifier = Modifier.width(140.dp),
+                        onClick = { onBookClick(bookUi.id) }
+                        )
                 }
             }
         }
@@ -136,12 +141,13 @@ fun HomeScreen() {
                 )
             }
 
-            items(uiState.continueReading) { book ->
+            items(uiState.continueReading) { bookUi ->
                 BookCard(
-                    book = book,
+                    book = bookUi,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
+                        .padding(vertical = 4.dp),
+                    onClick = { onBookClick(bookUi.id) }
                 )
             }
         }

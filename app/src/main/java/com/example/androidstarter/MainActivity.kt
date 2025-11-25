@@ -33,6 +33,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.androidstarter.ui.library.LibraryScreen
 import com.example.androidstarter.ui.profile.ProfileScreen
 import com.example.androidstarter.ui.shelf.ShelfScreen
+import com.example.androidstarter.ui.home.HomeScreen
+import com.example.androidstarter.ui.community.CommunityScreen
+import com.example.androidstarter.ui.detail.BookDetailScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +45,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+private const val ROUTE_BOOK_DETAIL = "bookDetail"
+private const val ARG_BOOK_ID = "bookId"
 
 enum class Dest(val route: String, val label: String) {
     Shelf("shelf", "Shelf"),
@@ -94,11 +100,32 @@ fun AppRoot() {
             startDestination = Dest.Home.route,
             modifier = Modifier.fillMaxSize()
         ) {
-            composable(Dest.Shelf.route) { ShelfScreen() }
-            composable(Dest.Library.route) { LibraryScreen() }
-            composable(Dest.Home.route) { HomeScreen() }
-            composable(Dest.Community.route) { CommunityScreen() }
-            composable(Dest.Profile.route) { ProfileScreen() }
+            composable(Dest.Shelf.route) {
+                ShelfScreen(onBookClick = { id ->
+                    navController.navigate("$ROUTE_BOOK_DETAIL/$id") }
+                ) }
+            composable(Dest.Library.route) {
+                LibraryScreen(onBookClick = { id ->
+                    navController.navigate("$ROUTE_BOOK_DETAIL/$id") }
+                ) }
+            composable(Dest.Home.route) {
+                HomeScreen(onBookClick = { id ->
+                    navController.navigate("$ROUTE_BOOK_DETAIL/$id") }
+                ) }
+            composable(Dest.Community.route) {
+                CommunityScreen() }
+            composable(Dest.Profile.route) {
+                ProfileScreen() }
+
+            composable("$ROUTE_BOOK_DETAIL/{$ARG_BOOK_ID}") { backStackEntry ->
+                val id = backStackEntry.arguments
+                    ?.getString(ARG_BOOK_ID)
+                    ?.toLongOrNull()
+
+                if (id != null) {
+                    BookDetailScreen(bookId = id)
+                }
+            }
         }
     }
 }

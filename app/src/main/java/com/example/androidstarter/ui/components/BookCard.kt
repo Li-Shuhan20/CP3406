@@ -1,5 +1,6 @@
 package com.example.androidstarter.ui.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -14,10 +15,17 @@ import com.example.androidstarter.BookUiModel
 @Composable
 fun BookCard(
     book: BookUiModel,
-    modifier: Modifier = Modifier.width(140.dp)
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.then(
+            if (onClick != null) {
+                Modifier.clickable { onClick() }
+            } else {
+                Modifier
+            }
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(
