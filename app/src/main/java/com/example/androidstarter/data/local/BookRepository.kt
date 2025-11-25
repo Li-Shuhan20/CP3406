@@ -2,7 +2,10 @@ package com.example.androidstarter.data
 
 import com.example.androidstarter.data.local.BookDao
 import com.example.androidstarter.data.local.BookEntity
+import com.example.androidstarter.data.remote.OpenLibraryApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flow
 
 data class ReadingStats(
     val total: Int,
@@ -18,12 +21,41 @@ class BookRepository(
     fun getBookById(id: Long): Flow<BookEntity?> =
         bookDao.getBookById(id)
 
-    fun searchBooks(keyword: String): Flow<List<BookEntity>> =
-        if (keyword.isBlank()) {
-            bookDao.getShelfBooks()
+    fun searchBooks(keyword: String): Flow<List<BookEntity>> = flow {
+        val trimmed = keyword.trim()
+
+        if (trimmed.isBlank()) {
+            emitAll(bookDao.getShelfBooks())
         } else {
-            bookDao.searchBooks(keyword)
+            try {
+                val response = OpenLibraryApi.service.searchBooks(trimmed)
+
+                val docs = response.docs
+                    .take(20)
+                    .map { doc ->
+                        val title = doc.title ?: "Unknown title"
+                        val author = doc.authorNames?.firstOrNull() ?: "Unknown author"
+
+                        BookEntity(
+                            title = title,
+                            author = author,
+                            rating = 0f,
+                            progress = 0f,
+                            isInShelf = false
+                        )
+                    }
+
+                if (docs.isNotEmpty()) {
+                    bookDao.insertBooks(docs)
+                }
+
+            } catch (e: Exception) {
+            }
+
+            emitAll(bookDao.searchBooks(trimmed))
         }
+    }
+
 
     suspend fun addBook(
         title: String,
