@@ -37,8 +37,9 @@ class ShelfViewModel(
 
     fun addDemoBook() {
         viewModelScope.launch {
+            val randomNumber = (1..999).random()
             repository.addBook(
-                title = "New Book ${(0..999).random()}",
+                title = "New Book $randomNumber",
                 author = "Unknown",
                 rating = 4.0f
             )

@@ -31,9 +31,9 @@ fun LibraryScreen(
         factory = LibraryViewModelFactory(repo)
     )
 
-    val state by vm.uiState.collectAsState()
-    val searchQuery = state.query
-    val searchResults = state.results
+    val uiState by vm.uiState.collectAsState()
+    val searchQuery = uiState.query
+    val searchResults = uiState.results
 
     val hotTags = listOf(
         Tag("Science Fiction", 1247),
@@ -65,7 +65,7 @@ fun LibraryScreen(
                 value = searchQuery,
                 onValueChange = { vm.onQueryChange(it) },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search books, authors, or topics...") },
+                placeholder = { Text("Search books, authors, or topics.") },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,

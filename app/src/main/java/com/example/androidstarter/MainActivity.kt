@@ -125,10 +125,8 @@ fun AppRoot() {
                 if (id != null) {
                     BookDetailScreen(
                         bookId = id,
-                        onBackClick = { navController.navigateUp() }
+                        onBackClick = { navController.popBackStack() }
                     )
-                } else {
-                    navController.navigateUp()
                 }
             }
         }

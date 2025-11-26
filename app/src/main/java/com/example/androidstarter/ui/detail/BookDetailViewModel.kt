@@ -1,10 +1,10 @@
 package com.example.androidstarter.ui.detail
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.androidstarter.data.BookRepository
 import com.example.androidstarter.data.local.BookEntity
-import com.example.androidstarter.toUiModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,5 +42,18 @@ class BookDetailViewModel(
         viewModelScope.launch {
             repository.updateProgress(current.id, newProgress)
         }
+    }
+}
+
+class BookDetailViewModelFactory(
+    private val repository: BookRepository,
+    private val bookId: Long
+) : ViewModelProvider.Factory {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(BookDetailViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
+            return BookDetailViewModel(repository, bookId) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class: $modelClass")
     }
 }
