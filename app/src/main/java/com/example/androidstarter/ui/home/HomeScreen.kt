@@ -124,9 +124,8 @@ fun HomeScreen(
                 items(recommendedBooks) { bookUi ->
                     BookCard(
                         book = bookUi,
-                        modifier = Modifier.width(140.dp),
-                        onClick = { onBookClick(bookUi.id) }
-                        )
+                        modifier = Modifier.width(140.dp)
+                    )
                 }
             }
         }
@@ -144,9 +143,7 @@ fun HomeScreen(
             items(uiState.continueReading) { bookUi ->
                 BookCard(
                     book = bookUi,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
+                    modifier = Modifier.width(140.dp),
                     onClick = { onBookClick(bookUi.id) }
                 )
             }

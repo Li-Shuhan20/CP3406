@@ -37,9 +37,9 @@ fun ShelfScreen(
         factory = ShelfViewModelFactory(repo)
     )
 
-    val uiState by vm.uiState.collectAsState()
+    val state by vm.uiState.collectAsState()
 
-    val myBooks = uiState.books.map { it.toUiModel() }
+    val myBooks = state.books.map { it.toUiModel() }
 
     LazyColumn(
         modifier = Modifier

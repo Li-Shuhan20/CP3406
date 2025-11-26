@@ -31,9 +31,9 @@ fun LibraryScreen(
         factory = LibraryViewModelFactory(repo)
     )
 
-    val uiState by vm.uiState.collectAsState()
-    val searchQuery = uiState.query
-    val searchResults = uiState.results
+    val state by vm.uiState.collectAsState()
+    val searchQuery = state.query
+    val searchResults = state.results
 
     val hotTags = listOf(
         Tag("Science Fiction", 1247),

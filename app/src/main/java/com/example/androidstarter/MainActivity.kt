@@ -123,7 +123,12 @@ fun AppRoot() {
                     ?.toLongOrNull()
 
                 if (id != null) {
-                    BookDetailScreen(bookId = id)
+                    BookDetailScreen(
+                        bookId = id,
+                        onBackClick = { navController.navigateUp() }
+                    )
+                } else {
+                    navController.navigateUp()
                 }
             }
         }
