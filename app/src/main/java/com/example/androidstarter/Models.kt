@@ -1,5 +1,6 @@
 package com.example.androidstarter
 
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.androidstarter.data.local.BookEntity
 
 data class BookUiModel(
@@ -27,11 +28,11 @@ data class Tag(
 data class ProfileItem(
     val title: String,
     val subtitle: String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector
+    val icon: ImageVector
 )
 
 fun BookEntity.toUiModel(): BookUiModel =
-    BookUiModel (
+    BookUiModel(
         id = id,
         title = title,
         author = author,
