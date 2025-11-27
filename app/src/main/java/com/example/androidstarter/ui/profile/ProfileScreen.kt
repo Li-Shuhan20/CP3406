@@ -31,6 +31,10 @@ fun ProfileScreen() {
         factory = ProfileViewModelFactory(repo)
     )
 
+    LaunchedEffect(Unit) {
+        vm.refreshStats()
+    }
+
     val uiState by vm.uiState.collectAsState()
 
     val profileItems = listOf(
