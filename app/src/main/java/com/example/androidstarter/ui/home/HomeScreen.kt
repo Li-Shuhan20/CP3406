@@ -138,14 +138,20 @@ fun HomeScreen(
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
                 )
-            }
+                Spacer(modifier = Modifier.height(8.dp))
 
-            items(uiState.continueReading) { bookUi ->
-                BookCard(
-                    book = bookUi,
-                    modifier = Modifier.width(140.dp),
-                    onClick = { onBookClick(bookUi.id) }
-                )
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    items(uiState.continueReading) { bookUi ->
+                        BookCard(
+                            book = bookUi,
+                            modifier = Modifier
+                                .width(160.dp),
+                            onClick = { onBookClick(bookUi.id) }
+                        )
+                    }
+                }
             }
         }
 

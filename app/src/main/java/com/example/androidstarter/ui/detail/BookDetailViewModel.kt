@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 data class BookDetailUiState(
     val isLoading: Boolean = true,
@@ -55,8 +56,10 @@ class BookDetailViewModel(
 
     fun updateRatingAndReview(rating: Float, review: String) {
         val current = _uiState.value.book ?: return
+        val rounded = (rating * 10).roundToInt() / 10f
+
         viewModelScope.launch {
-            repository.updateRatingAndReview(current.id, rating, review)
+            repository.updateRatingAndReview(current.id, rounded, review)
         }
     }
 }

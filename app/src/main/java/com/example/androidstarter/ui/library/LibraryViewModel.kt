@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.androidstarter.data.BookRepository
 import com.example.androidstarter.data.local.BookEntity
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 data class LibraryUiState(
@@ -23,18 +25,29 @@ class LibraryViewModel(
     private val _uiState = MutableStateFlow(LibraryUiState())
     val uiState: StateFlow<LibraryUiState> = _uiState.asStateFlow()
 
-    fun onQueryChange(newQuery: String) {
-        _uiState.value = _uiState.value.copy(
-            query = newQuery,
-            isLoading = true
-        )
+    private var searchJob: Job? = null
 
-        viewModelScope.launch {
-            repository.searchBooks(newQuery).collect { list ->
-                _uiState.value = _uiState.value.copy(
-                    results = list,
-                    isLoading = false
-                )
+    fun onQueryChange(newQuery: String) {
+        _uiState.update { it.copy(query = newQuery) }
+    }
+
+    fun performSearch() {
+        val keyword = _uiState.value.query.trim()
+
+        searchJob?.cancel()
+
+        if (keyword.isBlank()) {
+            _uiState.update { it.copy(results = emptyList(), isLoading = false) }
+            return
+        }
+
+        searchJob = viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true) }
+
+            repository.searchBooks(keyword).collect { list ->
+                _uiState.update {
+                    it.copy(results = list, isLoading = false)
+                }
             }
         }
     }

@@ -49,7 +49,6 @@ fun BookCard(
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Star,
@@ -57,8 +56,10 @@ fun BookCard(
                     modifier = Modifier.size(16.dp),
                     tint = MaterialTheme.colorScheme.primary
                 )
+                Spacer(modifier = Modifier.width(4.dp))
+                val ratingText = String.format("%.1f", book.rating)
                 Text(
-                    text = book.rating.toString(),
+                    text = ratingText,
                     style = MaterialTheme.typography.bodySmall
                 )
             }
@@ -84,10 +85,8 @@ fun BookCard(
                         )
                     }
                     LinearProgressIndicator(
-                        progress = book.progress,
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.primary,
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant
+                        progress = { book.progress },
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
             }

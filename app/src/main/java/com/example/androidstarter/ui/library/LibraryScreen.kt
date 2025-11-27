@@ -13,11 +13,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.androidstarter.ui.components.BookCard
 import com.example.androidstarter.Tag
 import com.example.androidstarter.data.BookRepository
 import com.example.androidstarter.data.local.AppDatabase
+import com.example.androidstarter.data.local.BookEntity
 import com.example.androidstarter.toUiModel
+import com.example.androidstarter.ui.components.BookCard
 
 @Composable
 fun LibraryScreen(
@@ -32,19 +33,19 @@ fun LibraryScreen(
     )
 
     val uiState by vm.uiState.collectAsState()
-    val searchQuery = uiState.query
-    val searchResults = uiState.results
 
-    val hotTags = listOf(
-        Tag("Science Fiction", 1247),
-        Tag("Mystery", 892),
-        Tag("Romance", 1156),
-        Tag("Fantasy", 943),
-        Tag("Thriller", 678),
-        Tag("Biography", 445),
-        Tag("History", 567),
-        Tag("Self-Help", 723)
-    )
+    val hotTags = remember {
+        listOf(
+            Tag("Science Fiction", 1247),
+            Tag("Mystery", 892),
+            Tag("Romance", 1156),
+            Tag("Fantasy", 943),
+            Tag("Thriller", 678),
+            Tag("Biography", 445),
+            Tag("History", 567),
+            Tag("Self-Help", 723)
+        )
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -62,7 +63,7 @@ fun LibraryScreen(
 
         item {
             OutlinedTextField(
-                value = searchQuery,
+                value = uiState.query,
                 onValueChange = { vm.onQueryChange(it) },
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text("Search books, authors, or topics.") },
@@ -71,6 +72,14 @@ fun LibraryScreen(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search"
                     )
+                },
+                trailingIcon = {
+                    IconButton(onClick = { vm.performSearch() }) {
+                        Icon(
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search books"
+                        )
+                    }
                 },
                 singleLine = true
             )
@@ -102,7 +111,7 @@ fun LibraryScreen(
             )
         }
 
-        items(searchResults) { entity ->
+        items(uiState.results) { entity: BookEntity ->
             val ui = entity.toUiModel()
 
             Column(
@@ -137,21 +146,21 @@ fun LibraryScreen(
                     }
                 }
 
-                searchQuery.isNotEmpty() && searchResults.isEmpty() -> {
-                    Text(
-                        text = "No results for \"$searchQuery\"",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(vertical = 16.dp)
-                    )
-                }
-
-                searchQuery.isEmpty() -> {
+                uiState.query.isBlank() -> {
                     Text(
                         text = "Enter a search term to find books",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(vertical = 32.dp)
+                    )
+                }
+
+                uiState.query.isNotBlank() && uiState.results.isEmpty() -> {
+                    Text(
+                        text = "No results for \"${uiState.query}\"",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = 16.dp)
                     )
                 }
             }
