@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BookHub</string>
-    <string name="hello_message">Hello, Android!</string>
+    <string name="app_name">Verse Vault</string>
+    <string name="hello_message">Hello</string>
 </resources>
 
 
