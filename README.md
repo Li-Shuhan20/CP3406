@@ -1,98 +1,127 @@
 # My Reading Shelf
 
-My Reading Shelf is a simple reading tracker app built for **CP3406 Assignment 2**.  
-It helps casual readers track the books they are reading, update their reading progress, and browse a small community and profile section.
+My Reading Shelf is a mobile reading tracker app developed for **CP3406 Assessment 2**.  
+It allows users to search for books, save them to a local shelf, track reading progress, rate and review books, view reading statistics, and browse a simple community feed.
 
-The app is written in **Kotlin** using **Jetpack Compose** and modern Android APIs. It uses **Room** for local storage and a **book search API** for the Library screen. The app follows an MVVM architecture with ViewModels and a Repository.
+The app is built with **Kotlin**, **Jetpack Compose**, **Room**, and **MVVM architecture**, and integrates the **Open Library API** for online book search.  
+It demonstrates a complete multi-screen mobile application with state management, persistent storage, navigation, and UI testing.
 
 ---
 
-## Core Features
+## ⭐ Core Features
 
-### Home
-- Welcome header for the user.
-- **Continue Reading** section that shows books from the local shelf with progress between 0% and 100%.
-- A small **recommendation / community preview** area so the home screen does not feel empty.
-- Tapping a book in *Continue Reading* opens the book detail screen.
-
-### Library
-- Search bar for searching books by title, author, or topic.
-- Uses a **remote Open Library API** to get book results.
-- Results are displayed as book cards.
-- Books that are already in the local shelf can be opened from here and viewed in the detail screen.
-- Shows popular tags as simple chips (e.g. Science Fiction, Fantasy, Romance).
-
-### Shelf
-- Shows all books stored in the **Room** database.
-- Each book card displays title, author, rating and a progress bar.
+### 🏠 Home
+- Displays recommended books (static mock content).
+- **Continue Reading section** showing books in progress from the Room database.
 - Tapping a book opens the **Book Detail** screen.
 
-### Book Detail
-- Shows full information for a single book.
-- Displays the current reading progress (0.0 to 1.0).
-- A button labelled **“Read 10% more”** increases the progress in Room and updates the UI.
-- Uses a top app bar with a back button to return to the previous screen.
-- Handles loading state and shows a “Book not found” message if the ID is invalid.
+### 🔍 Library (Online Search)
+- Users can search for books by title, author, or keywords.
+- Uses the **Open Library API** to fetch results.
+- If a book is already in the shelf, tapping opens its detail page.
+- Books not in the shelf show an **Add to shelf** button that inserts the book into Room.
+- Includes simple “Popular Tags” chip suggestions.
 
-### Community
-- Shows a list of simple discussion cards with title, author, reply count and likes.
-- Uses Compose layouts, icons and cards.
-- Data is mock data, but the layout demonstrates a possible community feature.
+### 📚 Shelf
+- Displays all locally saved books from Room.
+- Shows title, author, rating, and a progress bar.
+- Fully interactive — tapping opens the detail page.
 
-### Profile
-- Displays a basic user profile header (name and avatar placeholder).
-- Simple settings-style items such as account, reading goals, and notifications.
-- Demonstrates another common mobile layout and completes the bottom navigation.
+### 📖 Book Detail
+- Shows the complete information for a book stored in Room.
+- **Update reading progress**:
+    - *Quick +10%* button
+    - *Set exact progress* dialog with slider
+- **Rating slider (0–5)** with proper rounding.
+- **Short review / notes** text field.
+- All updates are immediately saved into Room.
 
----
+### 💬 Community
+- Simple, static discussion feed (mock data).
+- Users can create new posts via the **New Post** floating button.
+- New posts appear instantly at the top of the discussion list.
+- Used to demonstrate layout, cards, lists, and dialogs.
 
-## Tech Stack
-
-- **Language:** Kotlin
-- **UI:** Jetpack Compose, Material 3
-- **Architecture:** MVVM, Repository pattern, ViewModel + StateFlow
-- **Local storage:** Room (AppDatabase, BookDao, BookEntity)
-- **Networking:** Open Library API (Retrofit interface)
-- **Navigation:** Navigation Compose, argument passing for `bookId`
-- **Testing:** Basic unit and UI tests (for progress logic and main screens)
-- **Version control:** Git + GitHub
-
----
-
-## Architecture Overview
-
-The app follows a simple MVVM structure:
-
-- **Data layer**
-  - `BookEntity` – Room entity representing a book.
-  - `BookDao` – DAO with queries for shelf, continue reading, and book by ID.
-  - `AppDatabase` – Room database singleton.
-  - `BookRepository` – Single source of truth combining Room data and remote search results.
-
-- **Domain / UI state**
-  - `HomeUiState`, `ShelfUiState`, `LibraryUiState`, `BookDetailUiState` hold screen state.
-  - `BookUiModel` is used to show books in the UI.
-
-- **Presentation**
-  - `HomeViewModel`, `ShelfViewModel`, `LibraryViewModel`, `BookDetailViewModel` expose StateFlows.
-  - Screen composables (`HomeScreen`, `ShelfScreen`, `LibraryScreen`, `BookDetailScreen`, `CommunityScreen`, `ProfileScreen`) call `collectAsState()` to observe state.
+### 👤 Profile
+- Profile header with icon and placeholder email.
+- **Reading statistics** (powered by Room):
+    - Total books
+    - Finished books
+    - In-progress books
+- **Reading Goals Dashboard**:
+    - User can set a yearly reading target.
+    - A progress bar shows `finishedBooks / goal`.
+    - Automatically updates as books are completed.
+- Simple dashboard items (Create Content, Collections, etc.) for layout demonstration.
 
 ---
 
-## How to Run
+## 🏗️ Tech Stack
 
-1. Clone the repository.
-2. Open it in **Android Studio** (Giraffe or newer).
-3. Let Gradle sync finish.
-4. Create an Android emulator or connect a device.
-5. Run the app from Android Studio.
+- **Kotlin**
+- **Jetpack Compose** (Material 3)
+- **Navigation Compose**
+- **Room Database**
+- **Open Library API** (Retrofit-style interface)
+- **MVVM + Repository**
+- **StateFlow + collectAsState()**
+- **Git & GitHub**
+- **Basic Unit Tests + Compose UI Test**
 
 ---
 
-## Future Improvements
+## 📐 Architecture Overview
 
-- Real user login and cloud sync.
-- Stronger recommendation logic based on reading history and ratings.
-- Full community features (posts, comments, likes, user profiles).
-- Notifications and daily reading goals.
-- Dark mode and more theme customisation.
+The project uses a clean MVVM structure.
+
+### Data Layer
+- `BookEntity` — Room data model
+- `BookDao` — queries for shelf, continue reading, progress, rating, stats
+- `AppDatabase` — Room singleton
+- `BookRepository` — manages Room + remote search (Open Library)
+
+### UI State
+- Screen state models:  
+  `HomeUiState`, `LibraryUiState`, `ShelfUiState`,  
+  `BookDetailUiState`, `ProfileUiState`
+- `BookUiModel` maps Room entities into UI-ready models.
+
+### Presentation Layer
+- ViewModels for each screen, exposing `StateFlow`
+- Composable screens (`HomeScreen`, `LibraryScreen`, `ShelfScreen`, `BookDetailScreen`, `CommunityScreen`, `ProfileScreen`)
+- `MainActivity` hosts the navigation graph and bottom navigation bar.
+
+---
+
+## 🧪 Testing
+
+### Unit Tests
+- **ModelsTest**  
+  Tests mapping from `BookEntity` → `BookUiModel`.
+- **ReadingStatsTest**  
+  Tests correctness of reading statistics structure.
+
+### UI Test (Instrumented)
+- **CommunityScreenTest**  
+  Verifies that the “Community” header and “Latest discussions” text appear correctly.
+
+---
+
+## ▶️ How to Run
+
+1. Open the project in Android Studio (Giraffe or newer).
+2. Wait for Gradle sync to finish.
+3. Run the app on an emulator or device.
+4. To run tests:  
+   **Run > Run Tests** or use the gutter icons beside test classes.
+
+---
+
+## 🚀 Future Improvements
+
+- Cloud sync + user accounts
+- More advanced book recommendation logic based on reading patterns
+- Full community backend with comments and real data
+- More UI tests and repository-level tests
+- Dark mode & accessibility improvements
+- Persistent storage for reading goals (DataStore)
