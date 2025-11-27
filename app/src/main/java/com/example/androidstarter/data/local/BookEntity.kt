@@ -10,5 +10,6 @@ data class BookEntity(
     val author: String,
     val rating: Float = 0f,
     val progress: Float = 0f,
-    val isInShelf: Boolean = true
+    val isInShelf: Boolean = true,
+    val review: String = ""
 )

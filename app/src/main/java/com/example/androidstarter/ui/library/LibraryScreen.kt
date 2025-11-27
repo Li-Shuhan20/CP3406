@@ -104,28 +104,63 @@ fun LibraryScreen(
 
         items(searchResults) { entity ->
             val ui = entity.toUiModel()
-            BookCard(
-                book = ui,
+            val isLocal = entity.id != 0L && entity.isInShelf
+
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
-                onClick = { onBookClick(ui.id) }
-            )
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                BookCard(
+                    book = ui,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = if (isLocal) {
+                        { onBookClick(ui.id) }
+                    } else {
+                        null
+                    }
+                )
+
+                if (isLocal) {
+                    Text(
+                        text = "Already on your shelf",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                } else {
+                    TextButton(
+                        onClick = { vm.addToShelf(entity) }
+                    ) {
+                        Text("Add to shelf")
+                    }
+                }
+            }
         }
 
         item {
-            if (searchQuery.isEmpty()) {
+            if (uiState.isLoading) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (searchQuery.isNotEmpty() && searchResults.isEmpty()) {
+                Text(
+                    text = "No results for \"$searchQuery\"",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+            } else if (searchQuery.isEmpty()) {
                 Text(
                     text = "Enter a search term to find books",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(vertical = 32.dp)
-                )
-            } else {
-                Text(
-                    text = "Searching for: \"$searchQuery\"",
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(vertical = 16.dp)
                 )
             }
         }

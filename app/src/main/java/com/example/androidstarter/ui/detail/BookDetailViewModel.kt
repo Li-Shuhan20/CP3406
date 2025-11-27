@@ -43,6 +43,22 @@ class BookDetailViewModel(
             repository.updateProgress(current.id, newProgress)
         }
     }
+
+    fun setProgress(fraction: Float) {
+        val current = _uiState.value.book ?: return
+        val clamped = fraction.coerceIn(0f, 1f)
+
+        viewModelScope.launch {
+            repository.updateProgress(current.id, clamped)
+        }
+    }
+
+    fun updateRatingAndReview(rating: Float, review: String) {
+        val current = _uiState.value.book ?: return
+        viewModelScope.launch {
+            repository.updateRatingAndReview(current.id, rating, review)
+        }
+    }
 }
 
 class BookDetailViewModelFactory(

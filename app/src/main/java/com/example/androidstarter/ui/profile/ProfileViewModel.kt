@@ -14,7 +14,8 @@ data class ProfileUiState(
     val totalBooks: Int = 0,
     val finishedBooks: Int = 0,
     val inProgressBooks: Int = 0,
-    val isLoading: Boolean = true
+    val isLoading: Boolean = true,
+    val readingGoal: Int = 12
 )
 
 class ProfileViewModel(
@@ -31,13 +32,19 @@ class ProfileViewModel(
     fun refreshStats() {
         viewModelScope.launch {
             val stats: ReadingStats = repository.getReadingStats()
-            _uiState.value = ProfileUiState(
+            _uiState.value = _uiState.value.copy(
                 totalBooks = stats.total,
                 finishedBooks = stats.finished,
                 inProgressBooks = stats.inProgress,
                 isLoading = false
             )
         }
+    }
+
+    fun updateReadingGoal(goal: Int) {
+        _uiState.value = _uiState.value.copy(
+            readingGoal = goal.coerceAtLeast(1)
+        )
     }
 }
 
@@ -52,5 +59,3 @@ class ProfileViewModelFactory(
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-
-

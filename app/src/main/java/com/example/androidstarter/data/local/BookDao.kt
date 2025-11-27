@@ -30,6 +30,9 @@ interface BookDao {
     @Query("UPDATE books SET progress = :newProgress WHERE id = :id")
     suspend fun updateProgress(id: Long, newProgress: Float)
 
+    @Query("UPDATE books SET rating = :newRating, review = :newReview WHERE id = :id")
+    suspend fun updateRatingAndReview(id: Long, newRating: Float, newReview: String)
+
     @Update
     suspend fun updateBook(book: BookEntity)
 

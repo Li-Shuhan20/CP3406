@@ -75,6 +75,10 @@ class BookRepository(
         bookDao.updateProgress(id, newProgress)
     }
 
+    suspend fun updateRatingAndReview(id: Long, rating: Float, review: String) {
+        bookDao.updateRatingAndReview(id, rating, review)
+    }
+
     suspend fun ensureSampleData() {
         if (bookDao.getCount() == 0) {
             val samples = listOf(

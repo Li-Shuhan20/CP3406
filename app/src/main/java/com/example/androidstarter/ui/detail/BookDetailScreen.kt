@@ -32,6 +32,8 @@ fun BookDetailScreen(
     val uiState by vm.uiState.collectAsState()
     val book = uiState.book
 
+    var showProgressDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -63,6 +65,16 @@ fun BookDetailScreen(
                 }
 
                 else -> {
+                    var rating by remember(book.id) {
+                        mutableStateOf(book.rating.coerceIn(0f, 5f))
+                    }
+                    var review by remember(book.id) {
+                        mutableStateOf(book.review)
+                    }
+                    var progressForDialog by remember(book.id) {
+                        mutableStateOf(book.progress.coerceIn(0f, 1f))
+                    }
+
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
@@ -74,12 +86,103 @@ fun BookDetailScreen(
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Button(
-                            onClick = { vm.increaseProgress() },
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text("Read 10% more")
+                            val percent = (book.progress * 100).toInt()
+                            Text(
+                                text = "Reading progress: $percent%",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Button(onClick = { vm.increaseProgress() }) {
+                                    Text("Quick +10%")
+                                }
+                                OutlinedButton(
+                                    onClick = {
+                                        progressForDialog = book.progress.coerceIn(0f, 1f)
+                                        showProgressDialog = true
+                                    }
+                                ) {
+                                    Text("Set exact progress")
+                                }
+                            }
                         }
+
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = "Your rating",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Slider(
+                                value = rating,
+                                onValueChange = { rating = it },
+                                valueRange = 0f..5f,
+                                steps = 9
+                            )
+                            Text(
+                                text = String.format("Rating: %.1f / 5", rating),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            OutlinedTextField(
+                                value = review,
+                                onValueChange = { review = it },
+                                modifier = Modifier.fillMaxWidth(),
+                                label = { Text("Your notes / review") },
+                                maxLines = 4
+                            )
+                            Button(
+                                onClick = { vm.updateRatingAndReview(rating, review) },
+                                modifier = Modifier.align(Alignment.End)
+                            ) {
+                                Text("Save review")
+                            }
+                        }
+                    }
+
+                    if (showProgressDialog) {
+                        AlertDialog(
+                            onDismissRequest = { showProgressDialog = false },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        vm.setProgress(progressForDialog)
+                                        showProgressDialog = false
+                                    }
+                                ) {
+                                    Text("Save")
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(onClick = { showProgressDialog = false }) {
+                                    Text("Cancel")
+                                }
+                            },
+                            title = { Text("Set exact progress") },
+                            text = {
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    val percent = (progressForDialog * 100).toInt()
+                                    Text("Select your reading progress: $percent%")
+                                    Slider(
+                                        value = progressForDialog,
+                                        onValueChange = { progressForDialog = it },
+                                        valueRange = 0f..1f
+                                    )
+                                }
+                            }
+                        )
                     }
                 }
             }

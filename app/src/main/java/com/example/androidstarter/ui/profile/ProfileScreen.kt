@@ -1,13 +1,6 @@
 package com.example.androidstarter.ui.profile
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -16,20 +9,13 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Timer
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.androidstarter.ProfileItem
 import com.example.androidstarter.data.BookRepository
@@ -60,7 +46,6 @@ fun ProfileScreen() {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Header
         item {
             Column {
                 Text(
@@ -78,7 +63,6 @@ fun ProfileScreen() {
             }
         }
 
-        // Profile Header Card
         item {
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -89,7 +73,6 @@ fun ProfileScreen() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    // Avatar
                     Card(
                         modifier = Modifier.size(80.dp),
                         shape = CircleShape,
@@ -111,7 +94,6 @@ fun ProfileScreen() {
                         }
                     }
 
-                    // User Info
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -128,7 +110,6 @@ fun ProfileScreen() {
                         )
                     }
 
-                    // Reading Stats
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
@@ -141,7 +122,68 @@ fun ProfileScreen() {
             }
         }
 
-        // Profile Items
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "Reading Goals",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    var goalText by remember(uiState.readingGoal) {
+                        mutableStateOf(uiState.readingGoal.toString())
+                    }
+
+                    OutlinedTextField(
+                        value = goalText,
+                        onValueChange = { text ->
+                            if (text.all { it.isDigit() } && text.length <= 3) {
+                                goalText = text
+                            }
+                        },
+                        label = { Text("Yearly target (books)") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Button(
+                        onClick = {
+                            val value = goalText.toIntOrNull()
+                            if (value != null && value > 0) {
+                                vm.updateReadingGoal(value)
+                            }
+                        },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text("Save goal")
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    if (uiState.readingGoal > 0) {
+                        val progressFraction = (uiState.finishedBooks.toFloat() / uiState.readingGoal)
+                            .coerceIn(0f, 1f)
+
+                        Text(
+                            text = "Progress: ${uiState.finishedBooks} / ${uiState.readingGoal} books",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        LinearProgressIndicator(
+                            progress = progressFraction,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
+            }
+        }
+
         item {
             Text(
                 text = "Creative Center",

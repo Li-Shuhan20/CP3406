@@ -38,6 +38,16 @@ class LibraryViewModel(
             }
         }
     }
+
+    fun addToShelf(book: BookEntity) {
+        viewModelScope.launch {
+            repository.addBook(
+                title = book.title,
+                author = book.author,
+                rating = book.rating
+            )
+        }
+    }
 }
 
 class LibraryViewModelFactory(
