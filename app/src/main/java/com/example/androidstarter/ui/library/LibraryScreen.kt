@@ -104,7 +104,6 @@ fun LibraryScreen(
 
         items(searchResults) { entity ->
             val ui = entity.toUiModel()
-            val isLocal = entity.id != 0L && entity.isInShelf
 
             Column(
                 modifier = Modifier
@@ -114,54 +113,47 @@ fun LibraryScreen(
             ) {
                 BookCard(
                     book = ui,
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = if (isLocal) {
-                        { onBookClick(ui.id) }
-                    } else {
-                        null
-                    }
+                    modifier = Modifier.fillMaxWidth()
                 )
 
-                if (isLocal) {
-                    Text(
-                        text = "Already on your shelf",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                } else {
-                    TextButton(
-                        onClick = { vm.addToShelf(entity) }
-                    ) {
-                        Text("Add to shelf")
-                    }
+                TextButton(
+                    onClick = { vm.addToShelf(entity) }
+                ) {
+                    Text("Add to shelf")
                 }
             }
         }
 
         item {
-            if (uiState.isLoading) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    CircularProgressIndicator()
+            when {
+                uiState.isLoading -> {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            } else if (searchQuery.isNotEmpty() && searchResults.isEmpty()) {
-                Text(
-                    text = "No results for \"$searchQuery\"",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(vertical = 16.dp)
-                )
-            } else if (searchQuery.isEmpty()) {
-                Text(
-                    text = "Enter a search term to find books",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(vertical = 32.dp)
-                )
+
+                searchQuery.isNotEmpty() && searchResults.isEmpty() -> {
+                    Text(
+                        text = "No results for \"$searchQuery\"",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    )
+                }
+
+                searchQuery.isEmpty() -> {
+                    Text(
+                        text = "Enter a search term to find books",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = 32.dp)
+                    )
+                }
             }
         }
     }

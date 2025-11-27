@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Bookmarks
@@ -94,11 +95,13 @@ fun AppRoot() {
                 }
             }
         }
-    ) { padding ->
+    ) { innerPadding ->
         NavHost(
             navController = navController,
             startDestination = Dest.Home.route,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
             composable(Dest.Shelf.route) {
                 ShelfScreen(onBookClick = { id ->

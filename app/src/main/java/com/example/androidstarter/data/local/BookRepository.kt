@@ -3,10 +3,7 @@ package com.example.androidstarter.data
 import com.example.androidstarter.data.local.BookDao
 import com.example.androidstarter.data.local.BookEntity
 import com.example.androidstarter.data.remote.OpenLibraryApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 
 data class ReadingStats(
     val total: Int,
@@ -26,7 +23,7 @@ class BookRepository(
         val trimmed = keyword.trim()
 
         if (trimmed.isBlank()) {
-            emitAll(bookDao.getShelfBooks())
+            emit(emptyList())
             return@flow
         }
 
@@ -40,7 +37,7 @@ class BookRepository(
                     val author = doc.authorNames?.firstOrNull() ?: "Unknown author"
 
                     BookEntity(
-                        id = 0,
+                        id = 0L,
                         title = title,
                         author = author,
                         rating = 0f,
