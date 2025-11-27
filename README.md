@@ -1,6 +1,6 @@
-# My Reading Shelf
+# VERSE VAULT
 
-My Reading Shelf is a mobile reading tracker app developed for **CP3406 Assessment 2**.  
+VERSE VAULT is a mobile reading tracker app developed for **CP3406 Assessment 2**.  
 It allows users to search for books, save them to a local shelf, track reading progress, rate and review books, view reading statistics, and browse a simple community feed.
 
 The app is built with **Kotlin**, **Jetpack Compose**, **Room**, and **MVVM architecture**, and integrates the **Open Library API** for online book search.  
